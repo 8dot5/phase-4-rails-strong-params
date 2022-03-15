@@ -1,4 +1,9 @@
 class BirdsController < ApplicationController
+  wrap parameters format: []
+
+  #also disable for all controllers
+  # config/initializers/wrap_parameters.rb
+  # wrap_parameters format: []
 
   # GET /birds
   def index
@@ -6,14 +11,8 @@ class BirdsController < ApplicationController
     render json: birds
   end
 
-  # POST /birds
-  def create
-    bird = Bird.create(name: params[:name], species: params[:species])
-    render json: bird, status: :created
-  end
-
-  # GET /birds/:id
-  def show
+   # GET /birds/:id
+   def show
     bird = Bird.find_by(id: params[:id])
     if bird
       render json: bird
@@ -21,5 +20,26 @@ class BirdsController < ApplicationController
       render json: { error: "Bird not found" }, status: :not_found
     end
   end
+
+  # POST /birds
+  # def create
+  #   bird = Bird.create(name: params[:name], species: params[:species])
+  #   render json: bird, status: :created
+  # end
+
+  # refactor to use mass assignment of the POST /birds
+  # and strong params
+  def create
+    bird = Bird.create(bird_params)
+    render json: bird, status: :created
+  end
+
+  private
+
+  def bird_params
+    params.permit(:name, :species)
+  end
+
+
 
 end
